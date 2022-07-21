@@ -25,24 +25,6 @@ if __name__ == '__main__':
     dataset = TestDataset(cfg, data_dir=args.in_dir)
     print('DATA LEN ', len(dataset))
 
-    import cv2
-    import numpy as np
-    images = []
-    for file in dataset.image_files:
-        image = cv2.imread(os.path.join(dataset.data_dir, 'images', file))
-        mask = cv2.imread(os.path.join(dataset.data_dir, 'masks', file))
-        res = cv2.imread(os.path.join(dataset.data_dir, 'results', file))[:, 512:]
-        image = image + (255 - mask)
-
-        image = np.concatenate([image, res], 1)
-        images.append(image)
-
-    images = np.concatenate([
-        np.concatenate(images[:3]), np.concatenate(images[3:])
-    ], 1)
-    cv2.imwrite('image.png', images)
-
-    exit()
     trainer = Trainer(cfg)
     for i in range(len(dataset)):
         data = dataset.get_item(i)
