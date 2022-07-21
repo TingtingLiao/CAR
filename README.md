@@ -1,4 +1,4 @@
-# Clothed Avatar Reconstruction from In-the-wild Images
+# Clothed Avatar Reconstruction 
 
  
  
