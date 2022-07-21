@@ -13,7 +13,21 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="11d39233-75ff-44c7-aef0-67f461253997" name="Default Changelist" comment="" />
+    <list default="true" id="11d39233-75ff-44c7-aef0-67f461253997" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/Avatar.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/data/TrainDataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/TrainDataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/options.py" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -45,11 +59,13 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="1h2OfJpNnxbe7Mymv90k7b4XmYb" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
     <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
@@ -60,7 +76,7 @@
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="web.server" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -518,6 +534,7 @@
       <workItem from="1658193788648" duration="36696000" />
       <workItem from="1658283153933" duration="17236000" />
       <workItem from="1658369925367" duration="1615000" />
+      <workItem from="1658371564407" duration="4428000" />
     </task>
     <servers />
   </component>
@@ -541,10 +558,14 @@
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
     <state x="810" y="306" width="424" height="505" key="FileChooserDialogImpl/0.27.2048.1125@0.27.2048.1125" timestamp="1654689636036" />
-    <state x="702" y="448" width="277" height="231" key="Github.ShareDialog" timestamp="1658371324916">
+    <state x="702" y="420" width="277" height="231" key="Github.ShareDialog" timestamp="1658371735012">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
-    <state x="702" y="448" width="277" height="231" key="Github.ShareDialog/0.27.2048.1125@0.27.2048.1125" timestamp="1658371324916" />
+    <state x="702" y="420" width="277" height="231" key="Github.ShareDialog/0.27.2048.1125@0.27.2048.1125" timestamp="1658371735012" />
+    <state x="799" y="210" width="445" height="754" key="Github.UntrackedFilesDialog" timestamp="1658371786723">
+      <screen x="0" y="27" width="2048" height="1125" />
+    </state>
+    <state x="799" y="210" width="445" height="754" key="Github.UntrackedFilesDialog/0.27.2048.1125@0.27.2048.1125" timestamp="1658371786723" />
     <state width="1994" height="189" key="GridCell.Tab.0.bottom" timestamp="1655351438821">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
@@ -561,14 +582,22 @@
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
     <state width="1994" height="189" key="GridCell.Tab.0.right/0.27.2048.1125@0.27.2048.1125" timestamp="1655351438820" />
-    <state x="508" y="211" width="1031" height="751" key="SettingsEditor" timestamp="1655172975473">
+    <state x="793" y="204" width="457" height="766" key="RollbackChangesDialog" timestamp="1658377505760">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
-    <state x="508" y="211" width="1031" height="751" key="SettingsEditor/0.27.2048.1125@0.27.2048.1125" timestamp="1655172975473" />
-    <state x="622" y="311" width="800" height="552" key="Vcs.Push.Dialog.v2" timestamp="1658370155320">
+    <state x="793" y="204" width="457" height="766" key="RollbackChangesDialog/0.27.2048.1125@0.27.2048.1125" timestamp="1658377505760" />
+    <state x="508" y="197" width="1260" height="751" key="SettingsEditor" timestamp="1658376745687">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
-    <state x="622" y="311" width="800" height="552" key="Vcs.Push.Dialog.v2/0.27.2048.1125@0.27.2048.1125" timestamp="1658370155320" />
+    <state x="508" y="197" width="1260" height="751" key="SettingsEditor/0.27.2048.1125@0.27.2048.1125" timestamp="1658376745687" />
+    <state x="622" y="297" width="800" height="552" key="Vcs.Push.Dialog.v2" timestamp="1658377528939">
+      <screen x="0" y="27" width="2048" height="1125" />
+    </state>
+    <state x="622" y="297" width="800" height="552" key="Vcs.Push.Dialog.v2/0.27.2048.1125@0.27.2048.1125" timestamp="1658377528939" />
+    <state x="1041" y="227" width="190" height="699" key="ftp.server.browser" timestamp="1658376742601">
+      <screen x="0" y="27" width="2048" height="1125" />
+    </state>
+    <state x="1041" y="227" width="190" height="699" key="ftp.server.browser/0.27.2048.1125@0.27.2048.1125" timestamp="1658376742601" />
     <state x="687" y="266" width="672" height="678" key="search.everywhere.popup" timestamp="1655174334827">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>

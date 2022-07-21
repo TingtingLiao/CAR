@@ -11,9 +11,7 @@ from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from lib.data import TrainDataset
-from lib.data.EvalDataset import EvalDataset
-from lib.data.Evaluator import Evaluator
+from lib.data import TrainDataset, EvalDataset, Evaluator
 from lib.model import HGPIFuNet
 from lib.common.render import Render
 from lib.common.checkpoints import CheckpointIO
