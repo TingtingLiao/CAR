@@ -105,16 +105,16 @@ class CheckpointIO(object):
             if k in state_dict:
                 # try:
                 params_dict = state_dict[k]
-                # if k == 'model':
-                #     new_dict = {}
-                #     for key, val in params_dict.items():
-                #         if 'surface_classifier' in key:
-                #             new_key = 'ImplicitNet_canon' + key[18:]
-                #             new_dict[new_key] = val
-                #         else:
-                #             new_dict[key] = val
-                #     params_dict = new_dict
-                #     del new_dict
+                if k == 'model':
+                    new_dict = {}
+                    for key, val in params_dict.items():
+                        if 'surface_classifier' in key:
+                            new_key = 'ImplicitNet_canon' + key[18:]
+                            new_dict[new_key] = val
+                        else:
+                            new_dict[key] = val
+                    params_dict = new_dict
+                    del new_dict
                 v.load_state_dict(params_dict)
                 del params_dict
                 # except Exception as e:

@@ -267,11 +267,13 @@ class EvalDataset():
             scheduler_smpl.step(smpl_loss)
 
         T_normal_F, T_normal_B = self.render.get_clean_image()
-        cv2.imwrite(in_tensor['f_nml_save_path'],
-                    (T_normal_B[0].detach().permute(1, 2, 0).cpu().numpy()[..., ::-1] * 0.5 + 0.5) * 255)
         cv2.imwrite(in_tensor['b_nml_save_path'],
+                    (T_normal_B[0].detach().permute(1, 2, 0).cpu().numpy()[..., ::-1] * 0.5 + 0.5) * 255)
+        cv2.imwrite(in_tensor['f_nml_save_path'],
                     (T_normal_F[0].detach().permute(1, 2, 0).cpu().numpy()[..., ::-1] * 0.5 + 0.5) * 255)
 
+        print('saving ')
+        exit()
         calib = torch.stack(
             [torch.FloatTensor(
                 [
@@ -288,8 +290,8 @@ class EvalDataset():
 
     def generate_smpl(self, img_path, mask_path, save_dir):
         im_name = img_path.split('/')[-1][:-4]
-        f_nml_path = '%s/normal_B_%s.png' % (save_dir, im_name)
-        b_nml_path = '%s/normal_F_%s.png' % (save_dir, im_name)
+        f_nml_path = '%s/normal_F_%s.png' % (save_dir, im_name)
+        b_nml_path = '%s/normal_B_%s.png' % (save_dir, im_name)
         smpl_file = '%s/param%s.npz' % (save_dir, im_name)
 
         image_ori = Image.open(img_path).convert('RGB')

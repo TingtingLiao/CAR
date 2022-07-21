@@ -264,9 +264,9 @@ class TestDataset():
             scheduler_smpl.step(smpl_loss)
 
         T_normal_F, T_normal_B = self.render.get_clean_image()
-        cv2.imwrite(in_tensor['f_nml_save_path'],
-                    (T_normal_B[0].detach().permute(1, 2, 0).cpu().numpy()[..., ::-1] * 0.5 + 0.5) * 255)
         cv2.imwrite(in_tensor['b_nml_save_path'],
+                    (T_normal_B[0].detach().permute(1, 2, 0).cpu().numpy()[..., ::-1] * 0.5 + 0.5) * 255)
+        cv2.imwrite(in_tensor['f_nml_save_path'],
                     (T_normal_F[0].detach().permute(1, 2, 0).cpu().numpy()[..., ::-1] * 0.5 + 0.5) * 255)
 
         calib = torch.stack(
@@ -355,10 +355,14 @@ class TestDataset():
             mask_path = '%s/masks/%s.png' % (self.data_dir, im_name)
             smpl_dir = '%s/smpl' % self.data_dir
 
-            # todo process image
-            image_ori = Image.open(img_path).convert('RGBA')
-            mask = image_ori.split()
-            exit()
+            if not os.path.exists(mask_path):
+                im = cv2.imread(img_path)
+                mask = im.sum(2) > 0
+                mask = np.repeat(np.expand_dims(mask, 2), 3, axis=2).astype(np.float32) * 255
+                img, msk = process_img(im, mask)
+                cv2.imwrite(img_path, img)
+                cv2.imwrite(mask_path, msk)
+
             file_names = [f'param_{im_name}.npz', f'normal_B_{im_name}.png', f'normal_F_{im_name}.png']
             for file_name in file_names:
                 if not os.path.exists(os.path.join(smpl_dir, file_name)):
@@ -376,9 +380,9 @@ class TestDataset():
         normals = []
         smpl_dict = {}
 
-        for _ in range(self.num_views):
-            # im_name = self.image_files[index][:-4]
-            im_name = random.choice(self.image_files)[:-4]
+        for id in range(self.num_views):
+            im_name = self.image_files[index+id][:-4]
+            # im_name = random.choice(self.image_files)[:-4]
             img_path = '%s/images/%s.png' % (self.data_dir, im_name)
             mask_path = '%s/masks/%s.png' % (self.data_dir, im_name)
             smpl_file = '%s/smpl/param_%s.npz' % (self.data_dir, im_name)
@@ -408,9 +412,10 @@ class TestDataset():
         smpl_dict['canon_smpl_joints'] = smpl_dict['canon_smpl_joints'][0]
 
         data_dict = {
+            'im_name': im_name,
             'b_min': self.b_min,
             'b_max': self.b_max,
-            'img': torch.stack(images),
+            'image': torch.stack(images),
             'mask': torch.stack(masks),
             'smpl_lbs_weights': self.smpl_model.lbs_weights,  # [N, 24]
             'smpl_faces': torch.as_tensor(self.smpl_faces).long(),  # [6890, 3]

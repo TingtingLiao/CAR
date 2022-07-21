@@ -222,6 +222,12 @@ class Trainer(nn.Module):
         N = len(train_data_loader)
         star_epoch = self.star_epoch
 
+        for i in range(10, len(val_dataset)):
+            data = val_dataset.get_item(i)
+            save_path = '%s/%s_iter%d_%s.obj' % (self.vis_dir, 'eval', self.n_iter, data['sid'])
+            self.visualize(data, save_path)
+        exit()
+
         for epoch in range(0, self.max_epoch):
             adjust_learning_rate(self.optimizer_G, epoch, self.opt.schedule, self.opt.gamma)
             if epoch < star_epoch:
@@ -275,8 +281,10 @@ class Trainer(nn.Module):
         self.netG.eval()
         self.netG.training = False
 
+        test_canon = dataset.data_name == 'mvp'
+
         metric_dict = {'posed_chamfer': [], 'posed_p2s': [], 'posed_nc': []}
-        if dataset == 'mvp':
+        if test_canon:
             metric_dict.update({'canon_chamfer': [], 'canon_p2s': [], 'canon_nc': []})
 
         pbar = tqdm(range(len(dataset)))
@@ -299,7 +307,7 @@ class Trainer(nn.Module):
                     pr_canon_mesh, pr_posed_mesh = self.visualize(data, save_path=save_path, return_posed=True)
                     pr_posed_mesh.export(posed_save_path)
 
-                if dataset.data_name == 'mvp':
+                if test_canon:
                     gt_canon_mesh, gt_posed_mesh = dataset.load_gt_obj(**data)
                     self.evaluator.set_mesh(pr_canon_mesh, gt_canon_mesh)
                     canon_metric = self.evaluator.get_metrics()
@@ -315,7 +323,7 @@ class Trainer(nn.Module):
                 if save_error_map:
                     self.evaluator.get_error_map(save_path=f'{save_path[:-4]}_error_posed.png')
 
-            if dataset.data_name == 'mvp':
+            if test_canon:
                 metric_dict.update({'canon_' + k: metric_dict['canon_'+k] + [v] for k, v in canon_metric.items()})
             metric_dict.update({'posed_' + k: metric_dict['posed_'+k] + [v] for k, v in posed_metric.items()})
 
@@ -351,7 +359,7 @@ if __name__ == '__main__':
 
     trainer = Trainer(cfg)
     if args.test:
-        test_dataset = EvalDataset('buff', cfg, trainer.device)
+        test_dataset = EvalDataset('mvp', cfg, trainer.device)
         print('test data size: ', len(test_dataset))
         trainer.test(test_dataset)
     else:
