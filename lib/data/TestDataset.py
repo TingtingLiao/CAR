@@ -96,7 +96,7 @@ class TestDataset():
         self.opt = cfg.dataset
         self.image_size = self.opt.input_size
         self.data_dir = data_dir
-        self.image_files = sorted(os.listdir(os.path.join(self.data_dir, 'images')))
+        self.image_files = os.listdir(os.path.join(self.data_dir, 'images'))
         self.num_views = self.opt.num_views
         self.b_min = np.array(self.opt.b_min)
         self.b_max = np.array(self.opt.b_max)
