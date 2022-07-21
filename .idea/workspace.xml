@@ -13,20 +13,9 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="11d39233-75ff-44c7-aef0-67f461253997" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Avatar.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="11d39233-75ff-44c7-aef0-67f461253997" name="Default Changelist" comment="update README.md">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/data/TrainDataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/TrainDataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/options.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -534,8 +523,16 @@
       <workItem from="1658193788648" duration="36696000" />
       <workItem from="1658283153933" duration="17236000" />
       <workItem from="1658369925367" duration="1615000" />
-      <workItem from="1658371564407" duration="4428000" />
+      <workItem from="1658371564407" duration="4700000" />
     </task>
+    <task id="LOCAL-00001" summary="update README.md">
+      <created>1658377597051</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1658377597051</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -552,6 +549,10 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="update README.md" />
+    <option name="LAST_COMMIT_MESSAGE" value="update README.md" />
   </component>
   <component name="WindowStateProjectService">
     <state x="810" y="306" width="424" height="505" key="FileChooserDialogImpl" timestamp="1654689636036">
@@ -590,10 +591,10 @@
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
     <state x="508" y="197" width="1260" height="751" key="SettingsEditor/0.27.2048.1125@0.27.2048.1125" timestamp="1658376745687" />
-    <state x="622" y="297" width="800" height="552" key="Vcs.Push.Dialog.v2" timestamp="1658377528939">
+    <state x="622" y="283" width="800" height="552" key="Vcs.Push.Dialog.v2" timestamp="1658377613597">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
-    <state x="622" y="297" width="800" height="552" key="Vcs.Push.Dialog.v2/0.27.2048.1125@0.27.2048.1125" timestamp="1658377528939" />
+    <state x="622" y="283" width="800" height="552" key="Vcs.Push.Dialog.v2/0.27.2048.1125@0.27.2048.1125" timestamp="1658377613597" />
     <state x="1041" y="227" width="190" height="699" key="ftp.server.browser" timestamp="1658376742601">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>

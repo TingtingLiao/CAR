@@ -43,7 +43,6 @@ class TrainDataset(Dataset):
         self.b_max = np.array(self.opt.b_max)
         self.n_rotation = self.opt.train_n_rotation if self.is_train else self.opt.test_n_rotation
         self.n_action = self.opt.train_n_action if self.is_train else self.opt.test_n_action
-        # self.rotations = np.arange(0, 360, 360 // self.n_rotation)
         self.actions = np.asarray(range(self.n_action))
 
         # PIL to tensor
@@ -73,7 +72,7 @@ class TrainDataset(Dataset):
         if self.is_train:
             subjects = sorted(Path('./splits/train100.txt').read_text().strip().split('\n'))
         else:
-            subjects = sorted(Path('./splits/test50.txt').read_text().strip().split('\n'))[:20]
+            subjects = sorted(Path('./splits/test50.txt').read_text().strip().split('\n'))
         return subjects
 
     def __len__(self):
@@ -112,9 +111,6 @@ class TrainDataset(Dataset):
             # joint transform
             jointT = torch.from_numpy(param['jointT'])
             pose = torch.from_numpy(param['pose'])
-            # with torch.no_grad():
-            #     output = self.smpl_model(global_orient=pose[None, :1], body_pose=pose[None, 1:], custom_out=True)
-            #     jointT = output.joint_transform[:, :24]
 
             translate = -np.matmul(R, center)
             extrinsic = np.concatenate([R, translate.reshape(3, 1)], axis=1)
@@ -218,7 +214,6 @@ class TrainDataset(Dataset):
             subject: str
             poses: (torch.Tensor) [num_view, 24, 3]
         Returns:
-
         """
 
         self.smpl_model = self.smpl_model.cpu()
