@@ -35,7 +35,7 @@ def get_bbox(msk):
     return rmin, rmax, cmin-100, cmax+100
 
 
-def process_img(img, msk, bbox=None):
+def crop(img, msk, bbox=None):
     if bbox is None:
         bbox = get_bbox(msk > 100)
     cx = (bbox[3] + bbox[2]) // 2
@@ -75,23 +75,22 @@ def process_img(img, msk, bbox=None):
     return img, msk, pts
 
 
-def main(input_image, input_mask, out_dir):
-    '''
-    given foreground mask, this script crops and resizes an input image and mask for processing.
-    '''
-    img = cv2.imread(input_image, cv2.IMREAD_UNCHANGED)
-    if img.shape[2] == 4:
-        msk = img[:, :, 3:]
-        img = img[:, :, :3]
-    else:
-        msk = cv2.imread(input_mask, cv2.IMREAD_GRAYSCALE)
+def uncrop(image, bbox, origin_shape, fill_val=127.5):
+    h = bbox[3] - bbox[1]
+    origin_im = cv2.resize(image, (h, h))
+    origin_im = cv2.copyMakeBorder(origin_im,
+                                   max(bbox[1], 0),
+                                   max(512 - bbox[3], 0),
+                                   max(bbox[0], 0),
+                                   max(512 - bbox[2], 0), cv2.BORDER_CONSTANT, value=[fill_val, fill_val, fill_val])
+    h, w = origin_shape
 
-    img_new, msk_new = process_img(img, msk)
+    origin_im = cv2.resize(origin_im, (h, h))
+    crop_w = (h - w) // 2
+    origin_im = origin_im[:, crop_w:-crop_w, :]
 
-    img_name = Path(input_image).stem
+    return origin_im
 
-    cv2.imwrite(os.path.join(out_path, img_name + '.png'), img_new)
-    cv2.imwrite(os.path.join(out_path, img_name + '_mask.png'), msk_new)
 
 
 class TestDataset():
@@ -122,7 +121,7 @@ class TestDataset():
 
         self.image_to_tensor, self.mask_to_tensor, self.image_to_pymaf_tensor = get_transformer(self.image_size)
 
-        # self.prepare_data()
+        # self.remove_background()
 
     def __len__(self):
         return len(self.image_files) // self.num_views
@@ -291,8 +290,6 @@ class TestDataset():
     def generate_smpl(self, img_path, mask_path, save_dir):
         im_name = img_path.split('/')[-1][:-4]
         image_ori = Image.open(img_path).convert('RGB')
-
-        # todo remove bg
         mask = Image.open(mask_path).convert('L')
 
         mask = self.mask_to_tensor(mask)
@@ -353,21 +350,46 @@ class TestDataset():
         cv2.imwrite(icon_f_nml_path, (nmlF[0].permute(1, 2, 0).cpu().numpy()[..., ::-1] * 0.5 + 0.5) * 255)
         cv2.imwrite(icon_b_nml_path, (nmlB[0].permute(1, 2, 0).cpu().numpy()[..., ::-1] * 0.5 + 0.5) * 255)
 
+    def process_images(self, save_crop_param=False):
+        """
+        remove remove background and crop and resize
+        """
+        import human_inst_seg
+        import streamer_pytorch as streamer
+        seg_engine = human_inst_seg.Segmentation()
+        seg_engine.eval()
+
+        image_files = glob.glob(f'{self.data_dir}/images/*')
+        os.makedirs(os.path.join(self.data_dir, 'masks'), exist_ok=True)
+        if save_crop_param:
+            os.makedirs(os.path.join(self.data_dir, 'crop_param'), exist_ok=True)
+
+        data_stream = streamer.ImageListStreamer(image_files)
+        loader = torch.utils.data.DataLoader(
+            data_stream,
+            batch_size=1,
+            num_workers=1,
+            pin_memory=False,
+        )
+        for data, im_path in tqdm(zip(loader, image_files)):
+            outputs, bboxes, probs = seg_engine(data)
+            bboxes = (bboxes * probs).sum(dim=1, keepdim=True) / probs.sum(dim=1, keepdim=True)
+            bbox = bboxes[0, 0, 0].cpu().numpy().astype(np.int16)
+            bbox = [bbox[1], bbox[3], bbox[0], bbox[2]]
+
+            image = (outputs[0, :3].permute(1, 2, 0).cpu().numpy() * 0.5 + 0.5) * 255.0
+            mask = outputs[0, 3].cpu().numpy() * 255.0
+            image, mask, bbox = crop(image, mask, bbox)
+            cv2.imwrite(im_path, image[..., ::-1])
+            cv2.imwrite(im_path.replace('images', 'masks'), mask)
+            if save_crop_param:
+                np.savetxt(im_path.replace('images', 'crop_param')[:-3] + 'txt', bbox)
+
     def prepare_data(self, file):
-        # for file in self.image_files:
         im_name = file[:-4]
         img_path = '%s/images/%s.png' % (self.data_dir, im_name)
         mask_path = '%s/masks/%s.png' % (self.data_dir, im_name)
         smpl_dir = '%s/smpl' % self.data_dir
-
-        # if not os.path.exists(mask_path):
-        #     im = cv2.imread(img_path)
-        #     im = cv2.resize(im[:, 102:-102], (512, 512))
-        #     mask = im.sum(2) > 0
-        #     mask = np.repeat(np.expand_dims(mask, 2), 3, axis=2).astype(np.float32) * 255
-        #     # img, msk = process_img(im, mask)
-        #     cv2.imwrite(img_path, im)
-        #     cv2.imwrite(mask_path, mask)
 
         file_names = [f'param_{im_name}.npz', f'normal_B_{im_name}.png', f'normal_F_{im_name}.png']
         for file_name in file_names:
