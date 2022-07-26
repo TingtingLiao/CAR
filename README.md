@@ -9,11 +9,12 @@ Clothed avatar reconstruction
 - [Install](#install)
 - [Dataset](#Dataset)  
 - [Training](#Training)   
- 
+- [Testing](#Testing)   
+
 ## Install   
 
 ## Dataset 
-For single view reconstruction, please follow the [THuman2.0 Data Processing Instruction](docs/dataset.md) from ICON.
+For single view reconstruction, please follow the [THuman2.0 Data Processing Instruction](https://github.com/YuliangXiu/ICON/blob/master/docs/dataset.md) from ICON.
 For avatar reconstruction, please follow the 
 
 ## Training 
@@ -47,7 +48,7 @@ python -m apps.train --gpu 0 --data mvp -ii normal -cfg configs/ours.yaml
 ```
 
 ## Testing  
-1. Download pretrained models in  . 
+1. Download pretrained models in this [link]() . 
 2. Testing example images in directory ./examples. Results will be saved to ./examples/results.
 ``` 
 python -m apps.infer --gpu 0 -cfg configs/ours.yaml  

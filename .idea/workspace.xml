@@ -13,22 +13,12 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="11d39233-75ff-44c7-aef0-67f461253997" name="Default Changelist" comment="update README.md">
+    <list default="true" id="11d39233-75ff-44c7-aef0-67f461253997" name="Default Changelist" comment="add training code for pifu">
+      <change afterPath="$PROJECT_DIR$/configs/ours.yaml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/configs/pifu-sdf.yaml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/tmp/arwild_video.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/infer.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/infer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apps/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/common/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/common/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/common/render.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/common/render.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/common/train_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/common/train_util.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/data/TestDataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/TestDataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/data/TrainDataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/TrainDataset.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/data/mesh_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/mesh_util.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/model/HGPIFuNet.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/model/HGPIFuNet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/renderer/mesh.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/renderer/mesh.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,19 +79,19 @@
     </option>
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/configs" />
-      <recent name="$PROJECT_DIR$/lib/data" />
-      <recent name="$PROJECT_DIR$/configs/geofeat" />
-      <recent name="$PROJECT_DIR$/apps" />
-      <recent name="$PROJECT_DIR$/configs/loss" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/tmp" />
       <recent name="$PROJECT_DIR$/script" />
       <recent name="$PROJECT_DIR$/lib/common" />
       <recent name="$PROJECT_DIR$/lib/model" />
       <recent name="$PROJECT_DIR$/lib/data" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/configs" />
+      <recent name="$PROJECT_DIR$/lib/data" />
+      <recent name="$PROJECT_DIR$/configs/geofeat" />
+      <recent name="$PROJECT_DIR$/apps" />
+      <recent name="$PROJECT_DIR$/configs/loss" />
     </key>
   </component>
   <component name="RunManager" selected="Python.TestDataset">
@@ -608,7 +598,14 @@
       <option name="project" value="LOCAL" />
       <updated>1658389042854</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="add training code for pifu">
+      <created>1658834656262</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1658834656262</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -628,7 +625,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="update README.md" />
-    <option name="LAST_COMMIT_MESSAGE" value="update README.md" />
+    <MESSAGE value="add training code for pifu" />
+    <option name="LAST_COMMIT_MESSAGE" value="add training code for pifu" />
   </component>
   <component name="WindowStateProjectService">
     <state x="574" y="369" width="895" height="435" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1658384141457">
@@ -671,10 +669,10 @@
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
     <state x="508" y="155" width="1260" height="751" key="SettingsEditor/0.27.2048.1125@0.27.2048.1125" timestamp="1658829439162" />
-    <state x="622" y="185" width="800" height="552" key="Vcs.Push.Dialog.v2" timestamp="1658389056889">
+    <state x="622" y="171" width="800" height="552" key="Vcs.Push.Dialog.v2" timestamp="1658834678775">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
-    <state x="622" y="185" width="800" height="552" key="Vcs.Push.Dialog.v2/0.27.2048.1125@0.27.2048.1125" timestamp="1658389056889" />
+    <state x="622" y="171" width="800" height="552" key="Vcs.Push.Dialog.v2/0.27.2048.1125@0.27.2048.1125" timestamp="1658834678775" />
     <state x="1041" y="227" width="190" height="699" key="ftp.server.browser" timestamp="1658376742601">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
