@@ -240,25 +240,24 @@ class Trainer(nn.Module):
             if epoch < star_epoch:
                 continue
 
-            pbar = tqdm(enumerate(train_data_loader))
-            for train_idx, data in pbar:
-
+            pbar = tqdm(train_data_loader)
+            for data in pbar:
                 out = self.train_step(data)
 
-                string = f'{self.model_name} | {train_idx}/{N}| train | epoch:%d | lr:%s ' % (
+                string = f'{self.model_name} | {self.n_iter}| train | epoch:%d | lr:%s ' % (
                     epoch, self.optimizer_G.param_groups[0]['lr']) + convert_dict_to_str(out)
                 pbar.set_description(string)
 
-                if train_idx % int(self.opt.freq_save * N) == 0 and self.n_iter > 0:
+                if self.n_iter % int(self.opt.freq_save * N) == 0 and self.n_iter > 0:
                     self.checkpoint_io.save('model.pt', n_iter=self.n_iter, epoch=epoch)
                     self.checkpoint_io.save('latest.pt', n_iter=self.n_iter, epoch=epoch)
 
-                if train_idx % int(self.opt.freq_show_train * N) == 0 and self.n_iter > 0:
+                if self.n_iter % int(self.opt.freq_show_train * N) == 0 and self.n_iter > 0:
                     data = random.choice(train_dataset)
                     save_path = '%s/%s_iter%d_%s.obj' % (self.vis_dir, 'train', self.n_iter, data['sid'])
                     self.visualize(data, save_path)
 
-                if train_idx % int(self.opt.freq_show_val * N) == 0 and self.n_iter > 0:
+                if self.n_iter % int(self.opt.freq_show_val * N) == 0 and self.n_iter > 0:
                     data = random.choice(val_dataset)
                     save_path = '%s/%s_iter%d_%s.obj' % (self.vis_dir, 'eval', self.n_iter, data['sid'])
                     self.visualize(data, save_path)
@@ -360,18 +359,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     cfg = load_config(args.config, 'configs/default.yaml')
-    cfg.dataset.merge_from_list(['input_im', args.input_image, 'num_views', args.num_views])
-    cfg.training.merge_from_list(['resume', args.resume,
-                                  'gpus', [args.gpu],
-                                  'mcube_res', args.resolution])
+    cfg.dataset.merge_from_list(['input_im', args.input_image, 'num_views', args.num_views, 'data_name', args.data])
+    cfg.training.merge_from_list(['resume', args.resume, 'gpus', [args.gpu], 'mcube_res', args.resolution])
     cfg.freeze()
-
-    # os.environ['CUDA_VISIBLE_DEVICES'] = str(args.gpu)
 
     # dataset = THumanDataset(cfg)
     # data = dataset.get_item(0)
-    # print(data.keys())
-    # from pytorch3d.structures import Meshes
 
     trainer = Trainer(cfg)
     if args.test:
