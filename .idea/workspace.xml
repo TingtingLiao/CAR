@@ -14,8 +14,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="11d39233-75ff-44c7-aef0-67f461253997" name="Default Changelist" comment="update README.md">
+      <change afterPath="$PROJECT_DIR$/configs/pifu-sdf.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tmp/arwild_video.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/apps/infer.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/infer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apps/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/apps/train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/common/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/common/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/common/render.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/common/render.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/common/train_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/common/train_util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/data/TestDataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/TestDataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/data/TrainDataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/TrainDataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/data/mesh_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data/mesh_util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/model/HGPIFuNet.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/model/HGPIFuNet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/renderer/mesh.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/renderer/mesh.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,11 +74,11 @@
     <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/configs" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="web.server" />
+    <property name="settings.editor.selected.configurable" value="preferences.fileTypes" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -77,11 +90,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/configs" />
+      <recent name="$PROJECT_DIR$/lib/data" />
       <recent name="$PROJECT_DIR$/configs/geofeat" />
       <recent name="$PROJECT_DIR$/apps" />
       <recent name="$PROJECT_DIR$/configs/loss" />
-      <recent name="$PROJECT_DIR$/configs" />
-      <recent name="$PROJECT_DIR$/configs/mm" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/tmp" />
@@ -91,29 +104,7 @@
       <recent name="$PROJECT_DIR$/lib/data" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.HGPIFuNet">
-    <configuration name="DepthNormalizer" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Avatar" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/lib/model" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/lib/model/DepthNormalizer.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.TestDataset">
     <configuration name="HGPIFuNet" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Avatar" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -128,6 +119,28 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/lib/model/HGPIFuNet.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestDataset" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Avatar" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/lib/data" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/lib/data/TestDataset.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -203,19 +216,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.DepthNormalizer" />
+      <item itemvalue="Python.HGPIFuNet" />
+      <item itemvalue="Python.TestDataset" />
       <item itemvalue="Python.crop_img" />
       <item itemvalue="Python.train_geo" />
       <item itemvalue="Python.train_skin" />
-      <item itemvalue="Python.HGPIFuNet" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.TestDataset" />
         <item itemvalue="Python.HGPIFuNet" />
         <item itemvalue="Python.train_geo" />
         <item itemvalue="Python.crop_img" />
         <item itemvalue="Python.train_skin" />
-        <item itemvalue="Python.DepthNormalizer" />
       </list>
     </recent_temporary>
   </component>
@@ -525,7 +538,12 @@
       <workItem from="1658369925367" duration="1615000" />
       <workItem from="1658371564407" duration="8329000" />
       <workItem from="1658382749735" duration="2325000" />
-      <workItem from="1658385297939" duration="3676000" />
+      <workItem from="1658385297939" duration="17794000" />
+      <workItem from="1658467343375" duration="22659000" />
+      <workItem from="1658675508788" duration="9714000" />
+      <workItem from="1658731194318" duration="39084000" />
+      <workItem from="1658829197650" duration="267000" />
+      <workItem from="1658830959400" duration="32000" />
     </task>
     <task id="LOCAL-00001" summary="update README.md">
       <created>1658377597051</created>
@@ -583,7 +601,14 @@
       <option name="project" value="LOCAL" />
       <updated>1658388479562</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="update README.md">
+      <created>1658389042854</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1658389042854</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -610,10 +635,10 @@
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
     <state x="574" y="369" width="895" height="435" key="#com.intellij.fileTypes.FileTypeChooser/0.27.2048.1125@0.27.2048.1125" timestamp="1658384141457" />
-    <state x="810" y="306" width="424" height="505" key="FileChooserDialogImpl" timestamp="1654689636036">
+    <state x="810" y="264" width="424" height="505" key="FileChooserDialogImpl" timestamp="1658389996128">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
-    <state x="810" y="306" width="424" height="505" key="FileChooserDialogImpl/0.27.2048.1125@0.27.2048.1125" timestamp="1654689636036" />
+    <state x="810" y="264" width="424" height="505" key="FileChooserDialogImpl/0.27.2048.1125@0.27.2048.1125" timestamp="1658389996128" />
     <state x="702" y="420" width="277" height="231" key="Github.ShareDialog" timestamp="1658371735012">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
@@ -622,34 +647,34 @@
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
     <state x="799" y="210" width="445" height="754" key="Github.UntrackedFilesDialog/0.27.2048.1125@0.27.2048.1125" timestamp="1658371786723" />
-    <state width="1994" height="189" key="GridCell.Tab.0.bottom" timestamp="1655351438821">
+    <state width="1994" height="189" key="GridCell.Tab.0.bottom" timestamp="1658714017060">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
-    <state width="1994" height="189" key="GridCell.Tab.0.bottom/0.27.2048.1125@0.27.2048.1125" timestamp="1655351438821" />
-    <state width="1994" height="189" key="GridCell.Tab.0.center" timestamp="1655351438820">
+    <state width="1994" height="189" key="GridCell.Tab.0.bottom/0.27.2048.1125@0.27.2048.1125" timestamp="1658714017060" />
+    <state width="1994" height="189" key="GridCell.Tab.0.center" timestamp="1658714017060">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
-    <state width="1994" height="189" key="GridCell.Tab.0.center/0.27.2048.1125@0.27.2048.1125" timestamp="1655351438820" />
-    <state width="1994" height="189" key="GridCell.Tab.0.left" timestamp="1655351438819">
+    <state width="1994" height="189" key="GridCell.Tab.0.center/0.27.2048.1125@0.27.2048.1125" timestamp="1658714017060" />
+    <state width="1994" height="189" key="GridCell.Tab.0.left" timestamp="1658714017059">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
-    <state width="1994" height="189" key="GridCell.Tab.0.left/0.27.2048.1125@0.27.2048.1125" timestamp="1655351438819" />
-    <state width="1994" height="189" key="GridCell.Tab.0.right" timestamp="1655351438820">
+    <state width="1994" height="189" key="GridCell.Tab.0.left/0.27.2048.1125@0.27.2048.1125" timestamp="1658714017059" />
+    <state width="1994" height="189" key="GridCell.Tab.0.right" timestamp="1658714017060">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
-    <state width="1994" height="189" key="GridCell.Tab.0.right/0.27.2048.1125@0.27.2048.1125" timestamp="1655351438820" />
+    <state width="1994" height="189" key="GridCell.Tab.0.right/0.27.2048.1125@0.27.2048.1125" timestamp="1658714017060" />
     <state x="793" y="204" width="457" height="766" key="RollbackChangesDialog" timestamp="1658377505760">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
     <state x="793" y="204" width="457" height="766" key="RollbackChangesDialog/0.27.2048.1125@0.27.2048.1125" timestamp="1658377505760" />
-    <state x="508" y="197" width="1260" height="751" key="SettingsEditor" timestamp="1658376745687">
+    <state x="508" y="155" width="1260" height="751" key="SettingsEditor" timestamp="1658829439162">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
-    <state x="508" y="197" width="1260" height="751" key="SettingsEditor/0.27.2048.1125@0.27.2048.1125" timestamp="1658376745687" />
-    <state x="622" y="199" width="800" height="552" key="Vcs.Push.Dialog.v2" timestamp="1658388486046">
+    <state x="508" y="155" width="1260" height="751" key="SettingsEditor/0.27.2048.1125@0.27.2048.1125" timestamp="1658829439162" />
+    <state x="622" y="185" width="800" height="552" key="Vcs.Push.Dialog.v2" timestamp="1658389056889">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
-    <state x="622" y="199" width="800" height="552" key="Vcs.Push.Dialog.v2/0.27.2048.1125@0.27.2048.1125" timestamp="1658388486046" />
+    <state x="622" y="185" width="800" height="552" key="Vcs.Push.Dialog.v2/0.27.2048.1125@0.27.2048.1125" timestamp="1658389056889" />
     <state x="1041" y="227" width="190" height="699" key="ftp.server.browser" timestamp="1658376742601">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
@@ -670,6 +695,7 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/PIFu$sdf.coverage" NAME="sdf Coverage Results" MODIFIED="1604556048205" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/lib" />
+    <SUITE FILE_PATH="coverage/Avatar$TestDataset.coverage" NAME="TestDataset Coverage Results" MODIFIED="1658714013865" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/lib/data" />
     <SUITE FILE_PATH="coverage/ARWild$train_geo.coverage" NAME="train_geo Coverage Results" MODIFIED="1648130667686" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/apps" />
     <SUITE FILE_PATH="coverage/PIFu$HGFilters.coverage" NAME="HGFilters Coverage Results" MODIFIED="1600841391147" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/lib/model" />
     <SUITE FILE_PATH="coverage/PIFu$ConvFilters.coverage" NAME="ConvFilters Coverage Results" MODIFIED="1601025242597" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/lib/model" />

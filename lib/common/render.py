@@ -24,11 +24,8 @@ from pytorch3d.structures import Meshes, Pointclouds
 
 import torch
 import numpy as np
-import os
-import sys
-
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
-from lib.data.mesh_util import normalize_vertices
+import math
+import cv2
 
 
 class cleanShader(torch.nn.Module):
@@ -280,6 +277,27 @@ class Render:
             images[:, self.size * i:self.size * (i + 1), :] = self.renderer(pcd)[0, :, :, :3]
 
         return images.cpu().numpy()
+
+    def get_rendered_video(self, image, save_path):
+        self.cam_pos = []
+        for angle in range(360):
+            self.cam_pos.append(
+                (self.dis * math.cos(np.pi / 180 * angle), self.mesh_y_center,
+                 self.dis * math.sin(np.pi / 180 * angle)))
+
+        old_shape = np.array(image.shape[:2])
+        new_shape = np.around((self.size / old_shape[0]) * old_shape).astype(np.int)
+
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        video = cv2.VideoWriter(save_path, fourcc, 30, (self.size + new_shape[1], self.size))
+
+        for cam_id in range(len(self.cam_pos)):
+            self.init_renderer(self.get_camera(cam_id), 'clean_mesh', 'gray')
+            rendered_img = (self.renderer(self.mesh)[0, :, :, :3] * 255.0).detach().cpu().numpy().astype(np.uint8)
+            final_img = np.concatenate([image, rendered_img], axis=1)
+            video.write(final_img)
+
+        video.release()
 
 
 

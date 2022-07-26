@@ -32,7 +32,7 @@ def get_bbox(msk):
     rmin, rmax = np.where(rows)[0][[0, -1]]
     cmin, cmax = np.where(cols)[0][[0, -1]]
 
-    return rmin, rmax, cmin, cmax
+    return rmin, rmax, cmin-100, cmax+100
 
 
 def process_img(img, msk, bbox=None):
@@ -47,27 +47,32 @@ def process_img(img, msk, bbox=None):
     hh = height // 2
 
     # crop
-    dw = min(cx, w - cx, hh)
     if cy - hh < 0:
         img = cv2.copyMakeBorder(img, hh - cy, 0, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
         msk = cv2.copyMakeBorder(msk, hh - cy, 0, 0, 0, cv2.BORDER_CONSTANT, value=0)
         cy = hh
-    if cy + hh > h:
+    elif cy + hh > h:
         img = cv2.copyMakeBorder(img, 0, cy + hh - h, 0, 0, cv2.BORDER_CONSTANT, value=[0, 0, 0])
         msk = cv2.copyMakeBorder(msk, 0, cy + hh - h, 0, 0, cv2.BORDER_CONSTANT, value=0)
+
+    dw = min(cx, w - cx, hh)
     img = img[cy - hh:(cy + hh), cx - dw:cx + dw, :]
     msk = msk[cy - hh:(cy + hh), cx - dw:cx + dw]
+
+    pts = np.array([cx - dw, cy - hh, cx + dw, cy + hh])
+
     dw = img.shape[0] - img.shape[1]
     if dw != 0:
         img = cv2.copyMakeBorder(img, 0, 0, dw // 2, dw // 2, cv2.BORDER_CONSTANT, value=[0, 0, 0])
         msk = cv2.copyMakeBorder(msk, 0, 0, dw // 2, dw // 2, cv2.BORDER_CONSTANT, value=0)
+
     img = cv2.resize(img, (512, 512))
     msk = cv2.resize(msk, (512, 512))
 
-    kernel = np.ones((3, 3), np.uint8)
-    msk = cv2.erode((255 * (msk > 100)).astype(np.uint8), kernel, iterations=1)
+    # kernel = np.ones((1, 1), np.uint8)
+    # msk = cv2.erode((255 * (msk > 100)).astype(np.uint8), kernel, iterations=1)
 
-    return img, msk
+    return img, msk, pts
 
 
 def main(input_image, input_mask, out_dir):
@@ -96,7 +101,7 @@ class TestDataset():
         self.opt = cfg.dataset
         self.image_size = self.opt.input_size
         self.data_dir = data_dir
-        self.image_files = os.listdir(os.path.join(self.data_dir, 'images'))
+        self.image_files = sorted(os.listdir(os.path.join(self.data_dir, 'images')))
         self.num_views = self.opt.num_views
         self.b_min = np.array(self.opt.b_min)
         self.b_max = np.array(self.opt.b_max)
@@ -117,7 +122,7 @@ class TestDataset():
 
         self.image_to_tensor, self.mask_to_tensor, self.image_to_pymaf_tensor = get_transformer(self.image_size)
 
-        self.prepare_data()
+        # self.prepare_data()
 
     def __len__(self):
         return len(self.image_files) // self.num_views
@@ -348,30 +353,31 @@ class TestDataset():
         cv2.imwrite(icon_f_nml_path, (nmlF[0].permute(1, 2, 0).cpu().numpy()[..., ::-1] * 0.5 + 0.5) * 255)
         cv2.imwrite(icon_b_nml_path, (nmlB[0].permute(1, 2, 0).cpu().numpy()[..., ::-1] * 0.5 + 0.5) * 255)
 
-    def prepare_data(self):
-        for file in self.image_files:
-            im_name = file[:-4]
-            img_path = '%s/images/%s.png' % (self.data_dir, im_name)
-            mask_path = '%s/masks/%s.png' % (self.data_dir, im_name)
-            smpl_dir = '%s/smpl' % self.data_dir
+    def prepare_data(self, file):
+        # for file in self.image_files:
+        im_name = file[:-4]
+        img_path = '%s/images/%s.png' % (self.data_dir, im_name)
+        mask_path = '%s/masks/%s.png' % (self.data_dir, im_name)
+        smpl_dir = '%s/smpl' % self.data_dir
 
-            if not os.path.exists(mask_path):
-                im = cv2.imread(img_path)
-                mask = im.sum(2) > 0
-                mask = np.repeat(np.expand_dims(mask, 2), 3, axis=2).astype(np.float32) * 255
-                img, msk = process_img(im, mask)
-                cv2.imwrite(img_path, img)
-                cv2.imwrite(mask_path, msk)
+        # if not os.path.exists(mask_path):
+        #     im = cv2.imread(img_path)
+        #     im = cv2.resize(im[:, 102:-102], (512, 512))
+        #     mask = im.sum(2) > 0
+        #     mask = np.repeat(np.expand_dims(mask, 2), 3, axis=2).astype(np.float32) * 255
+        #     # img, msk = process_img(im, mask)
+        #     cv2.imwrite(img_path, im)
+        #     cv2.imwrite(mask_path, mask)
 
-            file_names = [f'param_{im_name}.npz', f'normal_B_{im_name}.png', f'normal_F_{im_name}.png']
-            for file_name in file_names:
-                if not os.path.exists(os.path.join(smpl_dir, file_name)):
-                    self.generate_smpl(img_path, mask_path, save_dir=smpl_dir)
+        file_names = [f'param_{im_name}.npz', f'normal_B_{im_name}.png', f'normal_F_{im_name}.png']
+        for file_name in file_names:
+            if not os.path.exists(os.path.join(smpl_dir, file_name)):
+                self.generate_smpl(img_path, mask_path, save_dir=smpl_dir)
 
-            file_names = [f'normal_F_{im_name}_icon.png', f'normal_B_{im_name}_icon.png']
-            for file_name in file_names:
-                if not os.path.exists(os.path.join(smpl_dir, file_name)):
-                    self.generate_icon_normal(img_path, mask_path, smpl_dir)
+        file_names = [f'normal_F_{im_name}_icon.png', f'normal_B_{im_name}_icon.png']
+        for file_name in file_names:
+            if not os.path.exists(os.path.join(smpl_dir, file_name)):
+                self.generate_icon_normal(img_path, mask_path, smpl_dir)
 
     def get_item(self, index):
         # try:
@@ -388,6 +394,8 @@ class TestDataset():
             smpl_file = '%s/smpl/param_%s.npz' % (self.data_dir, im_name)
             icon_f_nml_path = '%s/smpl/normal_F_%s_icon.png' % (self.data_dir, im_name)
             icon_b_nml_path = '%s/smpl/normal_B_%s_icon.png' % (self.data_dir, im_name)
+
+            self.prepare_data(self.image_files[index+id])
 
             image_ori = Image.open(img_path).convert('RGB')
             mask = Image.open(mask_path).convert('L')

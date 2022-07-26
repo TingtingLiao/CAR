@@ -11,7 +11,7 @@ from torch.utils.tensorboard import SummaryWriter
 from torch.utils.data import DataLoader
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from lib.data import TrainDataset, EvalDataset, Evaluator
+from lib.data import *
 from lib.model import HGPIFuNet
 from lib.common.render import Render
 from lib.common.checkpoints import CheckpointIO
@@ -123,36 +123,44 @@ class Trainer(nn.Module):
     def visualize(self, data, save_path, return_posed=True, no_refine=True, refine_type='mesh_pose'):
         self.netG.eval()
         self.netG.training = False
-
         device = self.device
-        pr_canon_mesh = gen_mesh(self.opt, self.netG, device, data, save_path)
-        render = self.render_meshes([pr_canon_mesh], normalize=True)
-        if return_posed:
-            nn_lbs_weights = query_lbs_weight(pr_canon_mesh.vertices,
-                                              data['canon_smpl_vert'],
-                                              data['smpl_lbs_weights'],
-                                              device).cpu()
-            if no_refine:
-                # warp directly
-                _, projected_points = warp_and_project_points(pr_canon_mesh.vertices,
-                                                              nn_lbs_weights,
-                                                              data['joint_transform'],
-                                                              data['calib'])
-                projected_points = projected_points[0].numpy() * np.array([[1, -1, 1]])
-                pr_posed_mesh = trimesh.Trimesh(projected_points, pr_canon_mesh.faces)
-            else:
-                refiner = NormalRefine(self.cfg.smpl, self.render, device)
-                pr_posed_mesh = refiner.optimize_mesh(pr_canon_mesh, nn_lbs_weights, refine_type=refine_type, **data)
-            render = self.render_meshes([pr_posed_mesh], normalize=False) + render
+        space = self.netG.space_list[0]
+        # try:
+        if space == 'projected':
+            mesh = pifu_gen_mesh(self.opt, self.netG, device, data, save_path)
+            render = self.render_meshes([mesh], normalize=False)
+        else:
+            mesh = gen_mesh(self.opt, self.netG, device, data, save_path)
+            render = self.render_meshes([mesh], normalize=True)
+            if return_posed:
+                nn_lbs_weights = query_lbs_weight(mesh.vertices,
+                                                  data['canon_smpl_vert'],
+                                                  data['smpl_lbs_weights'],
+                                                  device).cpu()
+                if no_refine:
+                    # warp directly
+                    _, projected_points = warp_and_project_points(mesh.vertices,
+                                                                  nn_lbs_weights,
+                                                                  data['joint_transform'],
+                                                                  data['calib'])
+                    projected_points = projected_points[0].numpy() * np.array([[1, -1, 1]])
+                    pr_posed_mesh = trimesh.Trimesh(projected_points, mesh.faces)
+                else:
+                    refiner = NormalRefine(self.cfg.smpl, self.render, device)
+                    pr_posed_mesh = refiner.optimize_mesh(mesh, nn_lbs_weights, refine_type=refine_type, **data)
+                render = self.render_meshes([pr_posed_mesh], normalize=False) + render
 
         inputs = self.convert_image_tensor_to_numpy(data['image'])
         vis_image = np.concatenate(inputs + render, 1)
         cv2.imwrite(save_path[:-4] + '.png', vis_image)
         print('visual image is saved to ', save_path[:-4] + '.png')
-        if return_posed:
-            return pr_canon_mesh, pr_posed_mesh
+        if return_posed and space == 'canon':
+            return mesh, pr_posed_mesh
         else:
-            return pr_canon_mesh
+            return mesh
+        # except Exception as e:
+        #     print(e)
+        #     return
 
     def train_step(self, data):
         self.netG.train()
@@ -163,13 +171,16 @@ class Trainer(nn.Module):
             else reshape_multiview_tensors(v)
             for k, v in data.items() if k in self.opt.input_keys
         }
+
         move_dict_to_device(in_tensor_dict, self.device)
 
         debug = False
         if debug:
-            N = data['canon_surf_normal'].shape[-1]
+            # N = data['canon_surf_normal'].shape[-1]
             from lib.common.train_util import scatter_points_to_image
-            img = scatter_points_to_image(data['canon_points'][0, :, N], data['image'][0])
+            pos_ids = in_tensor_dict['labels'][0, 0] > 0
+            img = scatter_points_to_image(in_tensor_dict['projected_points'][0, :, pos_ids],
+                                          data['image'][0, 0])
             cv2.imwrite('%s/000-test.png' % self.vis_dir, img)
             exit()
 
@@ -179,7 +190,9 @@ class Trainer(nn.Module):
         error.backward()
         self.optimizer_G.step()
 
-        return_dict = self.evaluator.calc_acc(res, in_tensor_dict['labels'], self.opt.thresh)
+        return_dict = {}
+        if 'labels' in in_tensor_dict:
+            return_dict = self.evaluator.calc_acc(res, in_tensor_dict['labels'], self.opt.thresh)
         return_dict.update(err_dict)
 
         for (k, v) in return_dict.items():
@@ -211,22 +224,16 @@ class Trainer(nn.Module):
 
     def run_train(self):
         # prepare data
-        train_dataset = TrainDataset(self.cfg)
+        train_dataset = TrainDataset(self.cfg) if not self.opt.data_name == 'thuman' else THumanDataset(cfg)
         train_data_loader = self._build_dataloader(train_dataset, 'train')
         print('train data size: ', len(train_data_loader))
 
         # NOTE: batch size should be 1 and use all the points for evaluation
-        val_dataset = TrainDataset(self.cfg, phase='test')
+        val_dataset = TrainDataset(self.cfg, phase='test') if not self.opt.data_name == 'thuman' else THumanDataset(cfg, phase='test')
         print('val data size: ', len(val_dataset))
 
         N = len(train_data_loader)
         star_epoch = self.star_epoch
-
-        for i in range(10, len(val_dataset)):
-            data = val_dataset.get_item(i)
-            save_path = '%s/%s_iter%d_%s.obj' % (self.vis_dir, 'eval', self.n_iter, data['sid'])
-            self.visualize(data, save_path)
-        exit()
 
         for epoch in range(0, self.max_epoch):
             adjust_learning_rate(self.optimizer_G, epoch, self.opt.schedule, self.opt.gamma)
@@ -235,6 +242,7 @@ class Trainer(nn.Module):
 
             pbar = tqdm(enumerate(train_data_loader))
             for train_idx, data in pbar:
+
                 out = self.train_step(data)
 
                 string = f'{self.model_name} | {train_idx}/{N}| train | epoch:%d | lr:%s ' % (
@@ -330,6 +338,8 @@ class Trainer(nn.Module):
             mean_dict = {k: np.array(v).mean() for k, v in metric_dict.items()}
             pbar.set_description(convert_dict_to_str(mean_dict))
 
+            exit()
+
 
 if __name__ == '__main__':
     import argparse
@@ -341,11 +351,12 @@ if __name__ == '__main__':
                         help='Path to config file')
     parser.add_argument('-t', '--test', type=bool, default=False, help='debug mode')
     parser.add_argument('-r', '--resolution', type=int, default=256, help='resolution of marching cube')
-    parser.add_argument('-nv', '--num_views', type=int, required=True, help='num views')
+    parser.add_argument('-nv', '--num_views', type=int, default=1, help='num views')
     parser.add_argument('-ii', '--input_image', type=str, default='normal', help='input image type [rgb or normal]')
     parser.add_argument('-re', '--resume', type=bool, default=True, help='resume model')
     parser.add_argument('-rp', '--resume_path', type=str, default="", help='resume model path')
     parser.add_argument('-g', '--gpu', type=int, default=0, help='')
+    parser.add_argument('-d', '--data', type=str, default="mvp", help='dataset name')
     args = parser.parse_args()
 
     cfg = load_config(args.config, 'configs/default.yaml')
@@ -357,9 +368,14 @@ if __name__ == '__main__':
 
     # os.environ['CUDA_VISIBLE_DEVICES'] = str(args.gpu)
 
+    # dataset = THumanDataset(cfg)
+    # data = dataset.get_item(0)
+    # print(data.keys())
+    # from pytorch3d.structures import Meshes
+
     trainer = Trainer(cfg)
     if args.test:
-        test_dataset = EvalDataset('mvp', cfg, trainer.device)
+        test_dataset = EvalDataset('buff', cfg, trainer.device)
         print('test data size: ', len(test_dataset))
         trainer.test(test_dataset)
     else:

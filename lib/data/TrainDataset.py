@@ -308,6 +308,11 @@ class TrainDataset(Dataset):
 
         posed_points, projected_points = warp_and_project_points(canon_points, weights, joint_transform, calib)
 
+        # inside_ids = labels[:, 0] < 0
+        # inside_pts = canon_points[inside_ids]
+        # save_obj_mesh('/media/liaotingting/usb3/mesh.obj', inside_pts.numpy())
+        # exit()
+
         return {
             'canon_points': canon_points.t().float(),  # [3, N]
             'posed_points': posed_points.transpose(1, 2).float(),  # [num_view, 3, num_surf]

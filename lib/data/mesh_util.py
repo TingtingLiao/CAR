@@ -114,6 +114,13 @@ def compute_normal(vertices, faces):
     return norm
 
 
+def projection(points, calib, format='numpy'):
+    if format == 'tensor':
+        return torch.mm(calib[:3, :3], points.T).T + calib[:3, 3]
+    else:
+        return np.matmul(calib[:3, :3], points.T).T + calib[:3, 3]
+
+
 def cal_sdf(mesh, points, edge=1.0, only_occ=False):
     pts_occ = mesh.contains(points)
     if only_occ:
@@ -335,6 +342,7 @@ def cal_sdf_batch(verts, faces, points, cmaps=None, vis=None):
          return_list: [sdf, norm, cmaps, vis]
     """
     Bsize = points.shape[0]
+
     normals = Meshes(verts, faces).verts_normals_padded()
     triangles = face_vertices(verts, faces)
 

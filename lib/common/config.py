@@ -1,4 +1,7 @@
 from yacs.config import CfgNode as CN
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '../'))
 
 
 def get_cfg_defaults(yaml_file='../configs/default.yaml'):

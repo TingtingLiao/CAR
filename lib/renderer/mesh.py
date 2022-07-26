@@ -41,57 +41,84 @@ def rescale_smpl(fitted_path, scale=100, translate=(0, 0, 0), return_vf=False):
         return fitted_body
 
 
-def load_fit_body(fitted_path, scale, smpl_type='smplx', smpl_gender='neutral'):
-    # load data
-    if fitted_path[-3:] == 'pkl':
-        param = np.load(fitted_path, allow_pickle=True)
-        for key in param.keys():
-            param[key] = torch.as_tensor(param[key])
-    elif fitted_path[-3:] == 'npz':
-        param_ = np.load(fitted_path)
-        param = {}
-        for key in param_.files:
-            param[key] = torch.as_tensor(param_[key])
-    else:
-        raise ValueError
+def load_fit_body(fitted_path, scale, smpl_model=None, smpl_type='smplx', smpl_gender='neutral', noise_dict=None):
+    param = np.load(fitted_path, allow_pickle=True)
+    for key in param.keys():
+        param[key] = torch.as_tensor(param[key])
 
-    smpl_model = get_smpl_model(smpl_type, smpl_gender)
-    if smpl_type == 'smplx':
-        smpl_out = smpl_model(shape_params=param['betas'],
-                              expression_params=param['expression'],
-                              body_pose=param['body_pose'],
-                              global_pose=param['global_orient'],
-                              jaw_pose=param['jaw_pose'],
-                              left_hand_pose=param['left_hand_pose'],
-                              right_hand_pose=param['right_hand_pose'],
-                              leye_pose=param['leye_pose'],
-                              reye_pose=param['reye_pose'])
-        print(f"smpl-x scale: {param['scale']}")
-        smpl_verts = ((smpl_out.vertices[0] * param['scale'] + param['translation']) * scale).detach()
-        smpl_joints = ((smpl_out.joints[0] * param['scale'] + param['translation']) * scale).detach()
-        smpl_mesh = trimesh.Trimesh(smpl_verts,
-                                    smpl_model.faces,
-                                    process=False, maintain_order=True)
+    if smpl_model is None:
+        smpl_model = get_smpl_model(smpl_type, smpl_gender)
+    model_forward_params = dict(betas=param['betas'],
+                                global_orient=param['global_orient'],
+                                body_pose=param['body_pose'],
+                                left_hand_pose=param['left_hand_pose'],
+                                right_hand_pose=param['right_hand_pose'],
+                                jaw_pose=param['jaw_pose'],
+                                leye_pose=param['leye_pose'],
+                                reye_pose=param['reye_pose'],
+                                expression=param['expression'],
+                                return_verts=True)
 
-        return smpl_mesh, smpl_joints
-    else:
-        smpl_out = smpl_model(
-            # shape_params=param['betas'],
-            body_pose=param['pose'][None, 3:],
-            global_pose=param['pose'][None, :3])
+    if noise_dict is not None:
+        model_forward_params.update(noise_dict)
+
+    smpl_out = smpl_model(**model_forward_params)
+
+    smpl_verts = ((smpl_out.vertices[0] * param['scale'] + param['translation'].view(1, 3)) * scale).detach()
+    smpl_joints = ((smpl_out.joints[0] * param['scale'] + param['translation'].view(1, 3)) * scale).detach()
+    smpl_mesh = trimesh.Trimesh(smpl_verts, smpl_model.faces, process=False, maintain_order=True)
+    return smpl_mesh, smpl_joints
 
 
-
-        print(f"smpl-x scale: {param['scale']}")
-        smpl_verts = ((smpl_out.vertices[0] * param['scale'] + param['translation']) * scale).detach()
-        smpl_joints = ((smpl_out.joints[0] * param['scale'] + param['translation']) * scale).detach()
-        smpl_mesh = trimesh.Trimesh(smpl_verts,
-                                    smpl_model.faces,
-                                    process=False, maintain_order=True)
-
-        return smpl_mesh, smpl_joints
-
-
+# def load_fit_body(fitted_path, scale, smpl_type='smplx', smpl_gender='neutral'):
+#     # load data
+#     if fitted_path[-3:] == 'pkl':
+#         param = np.load(fitted_path, allow_pickle=True)
+#         for key in param.keys():
+#             param[key] = torch.as_tensor(param[key])
+#     elif fitted_path[-3:] == 'npz':
+#         param_ = np.load(fitted_path)
+#         param = {}
+#         for key in param_.files:
+#             param[key] = torch.as_tensor(param_[key])
+#     else:
+#         raise ValueError
+#
+#     smpl_model = get_smpl_model(smpl_type, smpl_gender)
+#     if smpl_type == 'smplx':
+#         smpl_out = smpl_model(shape_params=param['betas'],
+#                               expression_params=param['expression'],
+#                               body_pose=param['body_pose'],
+#                               global_pose=param['global_orient'],
+#                               jaw_pose=param['jaw_pose'],
+#                               left_hand_pose=param['left_hand_pose'],
+#                               right_hand_pose=param['right_hand_pose'],
+#                               leye_pose=param['leye_pose'],
+#                               reye_pose=param['reye_pose'])
+#         print(f"smpl-x scale: {param['scale']}")
+#         smpl_verts = ((smpl_out.vertices[0] * param['scale'] + param['translation']) * scale).detach()
+#         smpl_joints = ((smpl_out.joints[0] * param['scale'] + param['translation']) * scale).detach()
+#         smpl_mesh = trimesh.Trimesh(smpl_verts,
+#                                     smpl_model.faces,
+#                                     process=False, maintain_order=True)
+#
+#         return smpl_mesh, smpl_joints
+#     else:
+#         smpl_out = smpl_model(
+#             # shape_params=param['betas'],
+#             body_pose=param['pose'][None, 3:],
+#             global_pose=param['pose'][None, :3])
+#
+#
+#
+#         print(f"smpl-x scale: {param['scale']}")
+#         smpl_verts = ((smpl_out.vertices[0] * param['scale'] + param['translation']) * scale).detach()
+#         smpl_joints = ((smpl_out.joints[0] * param['scale'] + param['translation']) * scale).detach()
+#         smpl_mesh = trimesh.Trimesh(smpl_verts,
+#                                     smpl_model.faces,
+#                                     process=False, maintain_order=True)
+#
+#         return smpl_mesh, smpl_joints
 
 
 def save_obj_mesh(mesh_path, verts, faces):

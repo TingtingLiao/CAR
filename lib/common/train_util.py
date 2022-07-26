@@ -139,8 +139,7 @@ def reconstruction(net, cuda, calib_tensor,
     except Exception as e:
         print(e)
         print('error cannot marching cubes')
-        # return -1
-        exit()
+        return -1
 
 
 def gen_mesh(opt, netG, cuda, data, save_path, use_octree=True):
@@ -151,8 +150,11 @@ def gen_mesh(opt, netG, cuda, data, save_path, use_octree=True):
     b_min = data['b_min']
     b_max = data['b_max']
 
-    smpl_dicts = {k: v.to(cuda) if 'posed' in k else v.unsqueeze(0).expand(netG.num_views, -1, -1).to(cuda)
-                  for k, v in data.items() if 'smpl' in k and 'lbs' not in k}
+    smpl_dicts = {
+        k: v.to(cuda) if 'posed' in k
+        else v.unsqueeze(0).expand(netG.num_views, -1, -1).to(cuda)
+        for k, v in data.items() if 'smpl' in k and 'lbs' not in k
+    }
 
     netG.filter(image_tensor)
 
@@ -175,6 +177,83 @@ def gen_mesh(opt, netG, cuda, data, save_path, use_octree=True):
     mesh.export(save_path)
 
     return mesh
+
+
+def pifu_gen_mesh(opt, netG, cuda, data, save_path, use_octree=True):
+    image_tensor = data['image'].to(device=cuda)
+
+    smpl_dicts = {
+        k: v.to(cuda) if 'canon' not in k and not k == 'smpl_faces'
+        else v.unsqueeze(0).expand(netG.num_views, -1, -1).to(cuda)
+        for k, v in data.items() if 'smpl' in k and torch.is_tensor(v)
+    }
+
+    netG.filter(image_tensor)
+
+    verts, faces, normals, values = pifu_reconstruction(
+        netG, cuda, smpl_dicts, opt.mcube_res, use_octree=use_octree, thresh=opt.thresh)
+
+    mesh = trimesh.Trimesh(verts, faces, normals, vertex_colors=values)
+
+    if opt.clean_mesh:
+        mesh = mesh_clean(mesh)
+
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
+    mesh.export(save_path)
+
+    return mesh
+
+
+def pifu_reconstruction(net, cuda, smpl_dict, resolution,
+                        b_min=np.array([-1., -1., -1.]), b_max=np.array([1., 1., 1.]),
+                        use_octree=False, num_samples=100000, thresh=0.5):
+    '''
+    Reconstruct meshes from sdf predicted by the network.
+    :param net: a BasePixImpNet object. call image filter beforehead.
+    :param cuda: cuda device
+    :param calib_tensor: calibration tensor
+    :param resolution: resolution of the grid cell
+    :param b_min: bounding box corner [x_min, y_min, z_min]
+    :param b_max: bounding box corner [x_max, y_max, z_max]
+    :param use_octree: whether to use octree acceleration
+    :param num_samples: how many points to query each gpu iteration
+    :thresh
+    :return: marching cubes results.
+    :thresh:
+    Args:
+    '''
+
+    # First we create a grid by resolution
+    # and transforming matrix for grid coordinates to real world xyz
+    coords, mat = create_grid(resolution, resolution, resolution, b_min, b_max)
+
+    # Then we define the lambda function for cell evaluation
+    def eval_func(points):
+        points[1, :] *= -1
+        projected_points = torch.from_numpy(points).unsqueeze(0).to(device=cuda).float()
+        geo_feat = net.get_geo_feat(space='projected', projected_points=projected_points, **smpl_dict)
+        net.query(projected_points, geo_feat, space='projected')
+        pred = net.get_preds(space='projected')
+        return 1 - pred[0][0].detach().cpu().numpy()
+
+    # Then we evaluate the grid
+    if use_octree:
+        sdf = eval_grid_octree(coords, eval_func, num_samples=num_samples)
+    else:
+        sdf = eval_grid(coords, eval_func, num_samples=num_samples)
+
+    # Finally we do marching cubes
+    try:
+        verts, faces, normals, values = measure.marching_cubes_lewiner(sdf, thresh)
+        verts = np.matmul(mat[:3, :3], verts.T) + mat[:3, 3:4]
+        verts = verts.T
+        normals = normals * 0.5 + 0.5
+        return verts, faces, normals, values
+
+    except Exception as e:
+        print(e)
+        print('error cannot marching cubes')
+        # return -1
 
 
 def adjust_learning_rate(optimizer, epoch, schedule, gamma):
@@ -274,7 +353,4 @@ def scatter_points_to_image(points, image):
     for xy in xys:
         if 0 <= int(xy[0]) < im_size and 0 <= int(xy[1]) < im_size:
             image_np[int(xy[1]), int(xy[0]), :] = (1, 1, 1)
-    return image * 255
-
-
-
+    return image_np * 255

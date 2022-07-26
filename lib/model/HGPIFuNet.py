@@ -73,14 +73,18 @@ class HGPIFuNet(BasePIFuNet):
 
         init_net(self)
 
-        for space in self.opt.geo_feat_dict:
-            setattr(self, f"ImplicitNet_{space}", ImplicitNet(dims=channels_IF,
-                                                              num_views=self.num_views,
-                                                              skip_in=self.opt.res_layers,
-                                                              geometric_init=self.opt.geometric_init,
-                                                              last_op=None if self.sdf else nn.Sigmoid()))
-            setattr(self, f"pred_sdf_{space}", [])
-            setattr(self, f"pred_normal_{space}", [])
+        self.space_list = []
+        for space, val in self.opt.geo_feat_dict.items():
+            if len(val) > 0:
+                setattr(self, f"ImplicitNet_{space}", ImplicitNet(dims=channels_IF,
+                                                                  num_views=self.num_views,
+                                                                  skip_in=self.opt.res_layers,
+                                                                  radius_init=self.opt.radius_init,
+                                                                  geometric_init=self.opt.geometric_init,
+                                                                  last_op=None if self.sdf else nn.Sigmoid()))
+                setattr(self, f"pred_sdf_{space}", [])
+                setattr(self, f"pred_normal_{space}", [])
+                self.space_list.append(space)
 
         # This is a list of [B x Feat_i x H x W] features
         self.im_feat_list = []
@@ -98,11 +102,11 @@ class HGPIFuNet(BasePIFuNet):
         '''
         if self.use_filter:
             self.im_feat_list, self.tmpx, self.normx = self.image_filter(images)
+            # If it is not in training, only produce the last im_feat
+            if not self.training:
+                self.im_feat_list = [self.im_feat_list[-1]]
         else:
             self.im_feat_list = [images]
-        # If it is not in training, only produce the last im_feat
-        if not self.training:
-            self.im_feat_list = [self.im_feat_list[-1]]
 
     def _get_geo_feat(self, points, smpl_joints=None, smpl_vert=None, smpl_faces=None, feat_keys=None):
         """
@@ -125,11 +129,16 @@ class HGPIFuNet(BasePIFuNet):
 
             # local spatial feature between samples and smpl
             elif feat_type == 'nndist':  # unsigned distance
-                dist, _, _ = knn_points(points.transpose(1, 2).contiguous(), smpl_vert)
+                dist, _, neighbors = knn_points(points.transpose(1, 2).contiguous(), smpl_vert)
+                # ray = points - neighbors.squeeze(2).transpose(1, 2)     # (B, K, N)
+                # if self.training:
+                #     noise = torch.normal(0, 0.01, size=ray.shape).to(ray.device)
+                #     ray += noise
                 dist = dist.squeeze(2).unsqueeze(1)
                 feat_list.append(dist)
 
             elif feat_type == 'sdf':  # ICON
+                # replace this code to kaolin
                 smpl_sdf, smpl_norm = cal_sdf_batch(smpl_vert, smpl_faces, points.permute(0, 2, 1).contiguous())
                 feat_list.append(smpl_sdf.transpose(1, 2))
 
@@ -158,9 +167,12 @@ class HGPIFuNet(BasePIFuNet):
 
         return feat_list
 
-    def get_geo_feat(self, space, canon_points, posed_points, projected_points=None,
-                     canon_smpl_joints=None, posed_smpl_joints=None,
-                     canon_smpl_vert=None, posed_smpl_vert=None, smpl_faces=None, **kwargs):
+    def get_geo_feat(self, space, canon_points=None, posed_points=None,
+                     projected_points=None,
+                     canon_smpl_joints=None, canon_smpl_vert=None,
+                     posed_smpl_joints=None, posed_smpl_vert=None,
+                     projected_smpl_joints=None, projected_smpl_vert=None,
+                     smpl_faces=None, **kwargs):
         """
         Args:
             space (str): 'canon', 'posed' or 'projected'
@@ -169,8 +181,10 @@ class HGPIFuNet(BasePIFuNet):
             projected_points (torch.tensor): (B, 3, N)
             canon_smpl_joints (torch.tensor): (B, 3, N)
             posed_smpl_joints (torch.tensor): (B, 3, N)
+            projected_smpl_joints:  (torch.tensor): (B, 3, N)
             canon_smpl_vert (torch.tensor): (B, N, 3)
             posed_smpl_vert (torch.tensor): (B, N, 3)
+            projected_smpl_vert (torch.tensor): (B, N, 3)
             smpl_faces (torch.tensor): (N, 3)
         Returns:
             features (torch.tensor) (B, Dim, N)
@@ -182,7 +196,6 @@ class HGPIFuNet(BasePIFuNet):
                                        canon_smpl_vert,
                                        smpl_faces,
                                        feat_keys)
-
         elif space == 'posed':
             feats = self._get_geo_feat(posed_points,
                                        posed_smpl_joints,
@@ -190,8 +203,11 @@ class HGPIFuNet(BasePIFuNet):
                                        smpl_faces,
                                        feat_keys)
         elif space == 'projected':
-            # only used for PIFu, using z value in projected space
-            feats = self._get_geo_feat(projected_points, feat_keys=feat_keys)
+            feats = self._get_geo_feat(projected_points,
+                                       projected_smpl_joints,
+                                       projected_smpl_vert,
+                                       smpl_faces,
+                                       feat_keys)
         else:
             raise ValueError('space should be canon, posed or projected')
 
@@ -242,7 +258,9 @@ class HGPIFuNet(BasePIFuNet):
         '''
         return self.im_feat_list[-1]
 
-    def get_preds(self, space='canon'):
+    def get_preds(self, space=None):
+        if space is None:
+            space = self.space_list[0]
         return getattr(self, f"pred_sdf_{space}")[-1]
 
     def _get_error(self, pred_sdf_list, gt_sdf=None, pred_normal_list=None, gt_surf_normal=None):
@@ -260,10 +278,13 @@ class HGPIFuNet(BasePIFuNet):
             elif 'igr_sdf' in self.loss_type:
                 sdf_surf, sdf_off_suf = pred_label.split([self.num_surf, self.num_perturb + self.num_bbox], dim=2)
                 error_surf_sdf = self.opt.lambda_igr_surf_sdf * sdf_surf.abs().mean()
+                err_dict['igr_sdf'] += error_surf_sdf
 
-                pred_sign = (sdf_off_suf > 0).float()
-                gt_sign = (gt_sdf[:, :, self.num_surf:] > 0).float()
-                error_off_surf_sdf = self.opt.lambda_igr_off_sdf * self.l2_loss(pred_sign, gt_sign)
+                if self.opt.lambda_igr_off_sdf > 0:
+                    pred_sign = (sdf_off_suf > 0).float()
+                    gt_sign = (gt_sdf[:, :, self.num_surf:] > 0).float()
+                    error_off_surf_sdf = self.opt.lambda_igr_off_sdf * self.l2_loss(pred_sign, gt_sign)
+                    err_dict['igr_sdf'] += error_off_surf_sdf
 
                 # weighted bbox sdf loss
                 # bbox_points = in_tensor_dict['canon_points'][:, :, -self.num_bbox:]
@@ -278,12 +299,11 @@ class HGPIFuNet(BasePIFuNet):
 
                 # SCANimate
                 # error_off_surf_sdf = self.opt.lambda_igr_off_sdf * torch.exp(-10.0 * sdf_bbox.abs()).mean()
-                err_dict['igr_sdf'] += error_surf_sdf + error_off_surf_sdf
+
 
             if 'normal' in self.loss_type:
                 nml_surf_pred = pred_normal_list[i][:, :, :self.num_surf]
-                canon_nml_surf_gt = gt_surf_normal
-                error_nml = (nml_surf_pred - canon_nml_surf_gt).norm(2, dim=1).mean()
+                error_nml = (nml_surf_pred - gt_surf_normal).norm(2, dim=1).mean()
                 err_dict['normal'] += self.opt.lambda_nml * error_nml
 
             if 'gradient' in self.loss_type:
@@ -297,13 +317,15 @@ class HGPIFuNet(BasePIFuNet):
     def calculate_error(self, in_tensor_dict):
         return_err_dict = {}
         gt_sdf = in_tensor_dict['labels'] if 'labels' in in_tensor_dict else None
-        for space in self.opt.geo_feat_dict.keys():
-            pred_sdf_list = getattr(self, f"pred_sdf_{space}")
-            pred_normal_list = getattr(self, f"pred_normal_{space}")
+        for space in self.space_list:
+            pred_sdf_list = getattr(self, f"pred_sdf_{space}", None)
+            pred_normal_list = getattr(self, f"pred_normal_{space}", None)
+            gt_surf_normal = in_tensor_dict[
+                f'{space}_surf_normal'] if f'{space}_surf_normal' in in_tensor_dict else None
             err_dict = self._get_error(pred_sdf_list,
                                        gt_sdf=gt_sdf,
                                        pred_normal_list=pred_normal_list,
-                                       gt_surf_normal=in_tensor_dict[f'{space}_surf_normal'])
+                                       gt_surf_normal=gt_surf_normal)
             return_err_dict.update({space + k: v for k, v in err_dict.items()})
 
         total_error = 0
@@ -325,12 +347,12 @@ class HGPIFuNet(BasePIFuNet):
     def forward(self, in_tensor_dict):
         self.filter(in_tensor_dict['image'])
 
-        for space in self.opt.geo_feat_dict.keys():
+        for space in self.space_list:
             geo_feats = self.get_geo_feat(space=space, **in_tensor_dict)
 
             self.query(in_tensor_dict['projected_points'], geo_feats, space=space)
 
-            if 'normal' in self.loss_type and self.training:
+            if self.sdf and self.training:
                 self.derive_normal(geo_feats, space=space)
 
         total_error, err_dict = self.calculate_error(in_tensor_dict)
