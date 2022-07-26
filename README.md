@@ -48,8 +48,9 @@ python -m apps.train --gpu 0 --data mvp -ii normal -cfg configs/ours.yaml
 ```
 
 ## Testing  
-1. Download pretrained models in this [link]() . 
-2. Testing example images in directory ./examples. Results will be saved to ./examples/results.
+1. Download the [pretrained model](https://drive.google.com/drive/folders/1uXkvdeYV6GxqL-2d_xtlsuvkf3xLXHgu?usp=sharing) and put it in ./out/ckpt/ours-normal-1view/. 
+2. Download [extra data](https://drive.google.com/drive/folders/1uXkvdeYV6GxqL-2d_xtlsuvkf3xLXHgu?usp=sharing) (PyMAF, ICON normal model, SMPL model) and put them to ./data.  
+3. Testing example images in directory ./examples. Results will be saved to ./examples/results.
 ``` 
 python -m apps.infer --gpu 0 -cfg configs/ours.yaml  
 ```

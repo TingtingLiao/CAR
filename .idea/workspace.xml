@@ -14,7 +14,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="11d39233-75ff-44c7-aef0-67f461253997" name="Default Changelist" comment="add training code for pifu">
-      <change afterPath="$PROJECT_DIR$/configs/ours.yaml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/configs/pifu-sdf.yaml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/tmp/arwild_video.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
@@ -605,7 +604,14 @@
       <option name="project" value="LOCAL" />
       <updated>1658834656262</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="add training code for pifu">
+      <created>1658835353730</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1658835353730</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -669,10 +675,10 @@
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
     <state x="508" y="155" width="1260" height="751" key="SettingsEditor/0.27.2048.1125@0.27.2048.1125" timestamp="1658829439162" />
-    <state x="622" y="171" width="800" height="552" key="Vcs.Push.Dialog.v2" timestamp="1658834678775">
+    <state x="622" y="143" width="800" height="552" key="Vcs.Push.Dialog.v2" timestamp="1658835361978">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
-    <state x="622" y="171" width="800" height="552" key="Vcs.Push.Dialog.v2/0.27.2048.1125@0.27.2048.1125" timestamp="1658834678775" />
+    <state x="622" y="143" width="800" height="552" key="Vcs.Push.Dialog.v2/0.27.2048.1125@0.27.2048.1125" timestamp="1658835361978" />
     <state x="1041" y="227" width="190" height="699" key="ftp.server.browser" timestamp="1658376742601">
       <screen x="0" y="27" width="2048" height="1125" />
     </state>
