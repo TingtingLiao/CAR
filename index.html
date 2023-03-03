@@ -251,12 +251,13 @@
 			</tr>
 		</table>
 		<table align=center width=850px>
-			<tr>
-				<td>
+			<span style="font-size:14px">
+				<i>
 <!--					This was a template originally made for <a href="http://richzhang.github.io/colorization/">Colorful Image Colorization</a>. The code can be found in this <a href="https://github.com/richzhang/webpage-template">repository</a>.-->
-				Framework of CAR.
-				</td>
-			</tr>
+				Images to avatars. Given an image of a person in an unconstrained pose, our method reconstructs 3D clothed avatars in both
+				original posed space and canonical space and can repose the human body from the canonical mesh.
+				</i>
+			</span>
 		</table>
 	</center>
 
@@ -265,7 +266,7 @@
 	<table align=center width=850px>
 		<center><h1>Abstract</h1></center>
 		<tr>
-			<td style="font-size:18px">
+			<td style="font-size:20px">
 				This paper presents a framework for efficient 3D clothed avatar reconstruction. By combining the advantages of the high accuracy of optimization-based methods and the efficiency of learning-based methods, we propose a coarse-to-fine way to realize a high-fidelity clothed avatar reconstruction (CAR) from a single image. At the first stage, we use an implicit model to learn the general shape in the canonical space of a person in a learning-based way, and at the second stage, we refine the surface detail by estimating the non-rigid deformation in the posed space in an optimization way. A hyper-network is utilized to generate a good initialization so that the convergence of the optimization process is greatly accelerated. Extensive experiments on various datasets show that the proposed CAR successfully produces high-fidelity avatars for arbitrarily clothed humans in real scenes.
 			</td>
 		</tr>
