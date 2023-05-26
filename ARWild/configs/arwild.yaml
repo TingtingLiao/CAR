@@ -1,0 +1,16 @@
+name: arwild
+sdf: False
+training:
+  gpus: [3]
+  test_gpus: [3]
+  thresh: 0.5
+  train_bsize: 1
+net:
+  geometric_init: False
+  geo_feat_dict: {'canon': ['points']}
+  point_feat_dim: 3
+  loss_type: ['occ']
+
+# user defined
+mcube_res: 256    # occupancy field resolution, higher --> more details
+clean_mesh: True # if True, will remove floating pieces

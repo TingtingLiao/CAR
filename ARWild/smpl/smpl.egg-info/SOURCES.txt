@@ -1,0 +1,15 @@
+LICENSE
+README.md
+setup.py
+smpl/__init__.py
+smpl/body_models.py
+smpl/joint_names.py
+smpl/lbs.py
+smpl/utils.py
+smpl/vertex_ids.py
+smpl/vertex_joint_selector.py
+smpl.egg-info/PKG-INFO
+smpl.egg-info/SOURCES.txt
+smpl.egg-info/dependency_links.txt
+smpl.egg-info/requires.txt
+smpl.egg-info/top_level.txt
