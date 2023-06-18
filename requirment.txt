@@ -1,6 +1,0 @@
-opencv-python
-chumpy==0.70
-vit_pytorch==0.26.3
-uarray==0.6.0
-h5py==3.6.0
-scikit-image==0.16.2
