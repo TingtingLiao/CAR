@@ -1,6 +1,6 @@
 # High-Fidelity Clothed Avatar Reconstruction from a Single Image
    
-[![Paper](https://img.shields.io/badge/arXiv-Paper-b31b1b.svg)](https://arxiv.org/submit/4833190/view)
+[![Paper](https://img.shields.io/badge/arXiv-Paper-b31b1b.svg)](https://arxiv.org/abs/2304.03903)
 
 This repository contains the official PyTorch implementation of:
 
