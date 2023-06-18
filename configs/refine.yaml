@@ -1,0 +1,128 @@
+name: refine
+debug: False
+training:
+  schedule: [3000]
+  lr_G: 0.01
+  freq_show_train: 0.03
+  freq_show_val: 0.1
+  freq_eval: 0.1
+  freq_save: 0.03
+  resume_path: '/media/liaotingting/usb2/projects/MetaSDF/out/ckpt/meta-smpl-normal/model.pt'
+  gpus: [0]
+  test_gpus: [0]
+  lr_C: 0.0001
+  weight_decay: 0.0
+  momentum: 0.0
+  optim: 'Adam'
+  gamma: 0.1
+  resume: True
+#  smpl_ckpt_path: ''
+  condition: "smpl"
+  test_mode: False
+  thresh: 0.
+  train_bsize: 4
+  val_bsize: 1
+  test_bsize: 1
+  num_threads: 8
+  num_epoch: 10
+  freq_plot: 0.05
+  max_n_iter: 100000
+  out_dir: out
+  mcube_res: 256
+  clean_mesh: True
+dataset:
+#  only_smpl: True
+  scale: 100
+  noise_dict: {'pose':0.05 , 'beta':0.5}
+  data_dir: '/media/liaotingting/usb3/Dataset/THuman2.0'
+  syn_dir: '/media/liaotingting/usb3/Dataset/THuman2.0-Synthetic'
+  mvp_syn_dir: '/media/liaotingting/usb3/Dataset/MVP-Synthetic'
+  overfit: False
+  image_size: 512
+  num_sample_pcl: 0
+  num_surface: 6890
+  num_perturb: 6890
+  num_bbox: 6000
+  num_sample_color: 0
+  sigma: 0.05
+  b_min: [-1.2, -1.2, -1.2]
+  b_max: [1.2, 1.2, 1.2]
+  num_views: 1
+  aug: False
+  aug_bri: 0.4
+  aug_con: 0.4
+  aug_sat: 0.4
+  aug_hue: 0.4
+  aug_blur: 1.0
+  random_flip: True
+  random_scale: True
+  random_trans: True
+  input_im: 'normal'
+  test_n_rotation: 4
+  train_n_rotation: 30
+  train_n_action: 12
+  test_n_action: 4
+net:
+  depth_net_kwarg: {
+    'input_nc': 2,
+    'output_nc': 1,
+    'ngf': 64,
+    'netG': "global",
+    'n_downsample_global': 4,
+    'n_blocks_global': 9,
+    'n_local_enhancers': 1,
+    'n_blocks_local': 3,
+    'norm': 'instance',
+  }
+  input_keys: []
+  sdfnet_kwargs: {
+    'dims': [3, 1024, 512, 256, 128, 1],
+    'skip_in': [2, 3, 4],
+    'geometric_init': True,
+    'radius_init': 1.0,
+    'beta': 100
+  }
+  smpl_encoder_kwargs: {
+    'dims': [6, 256, 256, 256, 256, 256],
+    'geometric_init': False,
+    'skip_in': [1, 2, 3, 4],
+    'beta': -1
+  }
+  smpl_hypernet_kwargs: {
+    num_hidden_layers: 3,
+    'hidden_ch':256,
+    'skip_in': [2],
+    'hyper_in_chs': [250, 250, 250, 250, 256],
+    'init_type': 'normal'
+  }
+  image_hypernet_kwargs: {
+    num_hidden_layers: 3,
+    'hidden_ch':64,
+    'skip_in': [2],
+    'hyper_in_chs': [64, 64, 64, 64, 64],
+    'init_type': 'last_zero'
+  }
+  image_encoder_kwargs: {
+    'in_channel': 5,
+    'num_stack': 5,
+    'num_hourglass': 1,
+    'hourglass_dim': 64,
+    'hg_down': 'ave_pool',
+    'norm': 'group'
+  }
+  gtype: 'HGPIFuNet'
+  norm_mlp: 'batch'
+  lambda_sdf: 1.0
+  lambda_occ: 1.0
+  no_residual: True
+  lambda_igr_surf_sdf: 1.
+  lambda_igr_off_sdf: 1.
+  lambda_nml: 1.0
+  lambda_grad: 0.1
+  loss_type: ['igr_sdf', 'normal', 'gradient']
+smpl:
+  path: '/media/liaotingting/usb2/projects/ARWild/data/smpl_related/models'
+  model_type: 'smpl_vitruvian'
+  gender: 'neutral'
+  use_face_contour: False
+  vitruvian_angle: 25

@@ -1,0 +1,31 @@
+name: exp3-mvp
+sdf: True
+training:
+  data_name: 'mvp'
+  gpus: [0]
+  test_gpus: [0]
+  thresh: 0.
+#  schedule: []
+#  num_epoch: 50
+#  freq_show_train: 0.9
+#  freq_show_val: 0.9
+#  freq_save: 0.9
+#  train_bsize: 4
+dataset:
+  overfit: False
+net:
+  geometric_init: True
+  geo_feat_dict: {'canon': ['points']}
+  point_feat_dim: 3
+  lambda_igr_surf_sdf: 1.
+  lambda_igr_off_sdf: 0.1
+  lambda_nml: 1.0
+  lambda_grad: 0.1
+  loss_type: ['igr_sdf', 'gradient', 'normal']
+  use_filter: True
+  use_normal: True
+  num_stack: 1
+
+# user defined
+mcube_res: 256    # occupancy field resolution, higher --> more details
+clean_mesh: True # if True, will remove floating pieces
