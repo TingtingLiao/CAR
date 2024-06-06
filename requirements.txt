@@ -1,0 +1,13 @@
+tqdm
+scipy
+trimesh
+tensorboard
+opencv-python
+imageio
+imageio[ffmpeg]
+matplotlib
+scikit-image
+smplx
+vit_pytorch 
+# torchmeta
+git+https://github.com/NVlabs/nvdiffrast.git
